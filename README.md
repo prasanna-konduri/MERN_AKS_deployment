@@ -1,15 +1,15 @@
 
 # Deploying a MERN Application on Azure Kubernetes Service (AKS)
 
-This guide provides a step-by-step approach to deploying a MERN (MongoDB, Express, React, Node.js) application on Azure Kubernetes Service (AKS), adhering to industry best practices for security and optimization.
+A step-by-step approach to deploying a MERN (MongoDB, Express, React, Node.js) application on Azure Kubernetes Service (AKS) is as follows, adhering to industry best practices for security and optimization.
 
 ## Prerequisites
 
 - **Azure Account**: Ensure you have an active Azure subscription.
-- **Azure CLI**: Installed and configured. [Install Azure CLI](https://docs.microsoft.com/en-us/cli/azure/install-azure-cli)
-- **Kubernetes CLI (kubectl)**: Installed. [Install kubectl](https://kubernetes.io/docs/tasks/tools/install-kubectl/)
-- **Docker**: Installed on your local machine. [Install Docker](https://docs.docker.com/get-docker/)
-- **Git**: Installed. [Install Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git)
+- **Azure CLI**: [Install Azure CLI](https://docs.microsoft.com/en-us/cli/azure/install-azure-cli)
+- **Kubernetes CLI (kubectl)**: [Install kubectl](https://kubernetes.io/docs/tasks/tools/install-kubectl/)
+- **Docker**:  [Install Docker](https://docs.docker.com/get-docker/)
+- **Git**: [Install Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git)
 - **Azure Key Vault**: For managing secrets. [Azure Key Vault](https://azure.microsoft.com/en-us/services/key-vault/)
 
 ## Step 1. Clone the Repository
@@ -100,158 +100,8 @@ az aks get-credentials --resource-group <ResourceGroup> --name <AKSClusterName>
 
 ## Step 6. Deploy Application on AKS
 
-### Kubernetes Configuration Files
-
-#### helloService Deployment and Service
-
-**helloservice-deployment.yml**:
-
-```yaml
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: helloservice
-  namespace: ms
-spec:
-  replicas: 2
-  selector:
-    matchLabels:
-      app: helloservice
-  template:
-    metadata:
-      labels:
-        app: helloservice
-    spec:
-      containers:
-      - name: helloservice
-        image: <ACRName>.azurecr.io/helloservice:v1
-        ports:
-        - containerPort: 3001
-```
-
-**helloservice-service.yml**:
-
-```yaml
-apiVersion: v1
-kind: Service
-metadata:
-  name: helloservice
-  namespace: ms
-spec:
-  selector:
-    app: helloservice
-  ports:
-  - protocol: TCP
-    port: 80
-    targetPort: 3001
-```
-
-#### profileService Deployment, Service, and Secret
-
-**profileservice-deployment.yml**:
-
-```yaml
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: profileservice
-  namespace: ms
-spec:
-  replicas: 2
-  selector:
-    matchLabels:
-      app: profileservice
-  template:
-    metadata:
-      labels:
-        app: profileservice
-    spec:
-      containers:
-      - name: profileservice
-        image: <ACRName>.azurecr.io/profileservice:v1
-        ports:
-        - containerPort: 3002
-        env:
-        - name: MONGO_URL
-          valueFrom:
-            secretKeyRef:
-              name: profile-secret
-              key: MONGO_URL
-```
-
-**profileservice-service.yml**:
-
-```yaml
-apiVersion: v1
-kind: Service
-metadata:
-  name: profileservice
-  namespace: ms
-spec:
-  selector:
-    app: profileservice
-  ports:
-  - protocol: TCP
-    port: 80
-    targetPort: 3002
-```
-
-**secret.yml**:
-
-```yaml
-apiVersion: v1
-kind: Secret
-metadata:
-  name: profile-secret
-  namespace: ms
-type: Opaque
-data:
-  MONGO_URL: <Base64_Encoded_Mongo_URL>
-```
-
-#### frontend Deployment and Service
-
-**frontend-deployment.yml**:
-
-```yaml
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: frontend
-  namespace: ms
-spec:
-  replicas: 2
-  selector:
-    matchLabels:
-      app: frontend
-  template:
-    metadata:
-      labels:
-        app: frontend
-    spec:
-      containers:
-      - name: frontend
-        image: <ACRName>.azurecr.io/frontend:v1
-        ports:
-        - containerPort: 80
-```
-
-**frontend-service.yml**:
-
-```yaml
-apiVersion: v1
-kind: Service
-metadata:
-  name: frontend
-  namespace: ms
-spec:
-  selector:
-    app: frontend
-  ports:
-  - protocol: TCP
-    port: 80
-    targetPort: 80
-```
+### Kubernetes Configuration Files.
+- Create a deployment. yaml and service.yaml files for each service
 
 ### Apply Configurations
 
@@ -321,7 +171,3 @@ kubectl describe pod <pod-name>
 ```bash
 kubectl get events
 ```
-
----
-
-For screenshots and detailed steps, refer to the documentation in the GitHub repository.
