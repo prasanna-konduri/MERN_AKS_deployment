@@ -40,43 +40,11 @@ Replace `"your_mongo_connection_string"` with your actual MongoDB connection str
 
 Create `Dockerfile` for each service:
 
-**helloService/Dockerfile**:
+- helloService/Dockerfile
+- profileService/Dockerfile
+- frontend/Dockerfile:
 
-```dockerfile
-FROM node:14
-WORKDIR /usr/src/app
-COPY package*.json ./
-RUN npm install
-COPY . .
-EXPOSE 3001
-CMD ["node", "index.js"]
-```
 
-**profileService/Dockerfile**:
-
-```dockerfile
-FROM node:14
-WORKDIR /usr/src/app
-COPY package*.json ./
-RUN npm install
-COPY . .
-EXPOSE 3002
-CMD ["node", "index.js"]
-```
-
-**frontend/Dockerfile**:
-
-```dockerfile
-FROM node:14
-WORKDIR /usr/src/app
-COPY package*.json ./
-RUN npm install
-COPY . .
-RUN npm run build
-RUN npm install -g serve
-EXPOSE 80
-CMD ["serve", "-s", "build"]
-```
 
 ## Step 4. Build and Push Docker Images
 
