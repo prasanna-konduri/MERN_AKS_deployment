@@ -1,0 +1,20 @@
+  apiVersion: apps/v1
+  kind: Deployment
+  metadata:
+    name: helloservice
+    namespace: ms
+  spec:
+    replicas: 2
+    selector:
+      matchLabels:
+        app: helloservice
+    template:
+      metadata:
+        labels:
+          app: helloservice
+      spec:
+        containers:
+        - name: helloservice
+          image: prasannaacr.azurecr.io/helloservice:v1
+          ports:
+          - containerPort: 3001
